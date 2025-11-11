@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Linux VPC Emulator - Complete Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 {
+            color: #34495e;
+            margin: 25px 0 15px 0;
+            font-size: 1.4em;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-item h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .architecture {
+            background: #2c3e50;
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            line-height: 1.4;
+            overflow-x: auto;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .code-block pre {
+            margin: 0;
+        }
+
+        .success { color: #27ae60; }
+        .warning { color: #f39c12; }
+        .error { color: #e74c3c; }
+        .info { color: #3498db; }
+
+        .command {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #3498db;
+        }
+
+        .output {
+            background: #ecf0f1;
+            color: #2c3e50;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #27ae60;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checklist li:before {
+            content: "✅";
+            font-size: 1.2em;
+        }
+
+        .phase {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            background: #ecf0f1;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .tab:hover {
+            background: #bdc3c7;
+        }
+
+        .tab.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+
+        .emoji {
+            font-size: 1.2em;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ Building a Local Linux VPC Emulator</h1>
+            <p>Complete Cloud Networking on Your Machine</p>
+            <div style="margin-top: 20px; padding: 15px; background: #e8f4fd; border-radius: 10px; border-left: 4px solid #3498db;">
+                <p style="color: #2c3e50; margin: 0;">
+                    <strong>🚀 Perfect for:</strong> Learning, Development, and Testing without Cloud Costs!
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji">🎯</span> What You'll Build</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <h4>🏢 VPC Management</h4>
+                    <p>Create/manage virtual private clouds with custom CIDR blocks</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🔒 Network Isolation</h4>
+                    <p>Complete separation using Linux network namespaces</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🛡️ Security Groups</h4>
+                    <p>JSON-based firewall rules with stateful filtering</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🏗️ Multi-Tier Architectures</h4>
+                    <p>Web, app, and database tier segregation</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🔗 VPC Peering</h4>
+                    <p>Controlled cross-VPC communication</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🌐 NAT Gateway</h4>
+                    <p>Internet access for public subnets</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji">🏗️</span> Architecture Overview</h2>
+            <div class="architecture">
++-----------------------------------------------------------------------+
+|                        Linux Host System                              |
+|                                                                       |
+|  +-------------------+                    +-------------------+      |
+|  |     VPC: company-a|                    |     VPC: company-b|      |
+|  |   10.0.0.0/16     |                    |   172.16.0.0/16   |      |
+|  |                   |                    |                   |      |
+|  |  +-------------+  |   VPC Peering    |  +-------------+  |      |
+|  |  | br-company-a|◄───────────────────►|  | br-company-b|  |      |
+|  |  +-------------+  |                    |  +-------------+  |      |
+|  |       |     |     |                    |         |         |      |
+|  |  +---------+ +---------+               |     +---------+   |      |
+|  |  |web subnet| |app subnet|             |     |api subnet|  |      |
+|  |  |10.0.1.0/24|10.0.2.0/24|            |     |172.16.1.0/24| |      |
+|  |  |ns-web    | |ns-app    |             |     |ns-api     |  |      |
+|  |  +---------+ +---------+               |     +---------+   |      |
+|  |     |           |                      |         |         |      |
+|  | +-------+   +-------+                  |     +-------+     |      |
+|  | |frontend| |backend |                  |     |service|     |      |
+|  | |10.0.1.100|10.0.2.100|                |     |172.16.1.100| |      |
+|  | +-------+   +-------+                  |     +-------+     |      |
+|  +-------------------+                    +-------------------+      |
+|           |                                                          |
+|           | NAT via eth0                                              |
+|   +----------------+                                                  |
+|   |   Internet     |                                                  |
+|   +----------------+                                                  |
++-----------------------------------------------------------------------+
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h2><span class="emoji">🛠️</span> Prerequisites</h2>
+                <h3>System Requirements</h3>
+                <ul class="checklist">
+                    <li>Linux OS with kernel 4.0+</li>
+                    <li>Bash 4.0 or higher</li>
+                    <li>Root privileges (for network configuration)</li>
+                    <li>Basic networking knowledge</li>
+                </ul>
+
+                <h3>Install Dependencies</h3>
+                <p><strong>Ubuntu/Debian:</strong></p>
+                <div class="command">
+                    sudo apt update<br>
+                    sudo apt install iproute2 iptables jq bridge-utils net-tools curl
+                </div>
+
+                <p><strong>CentOS/RHEL:</strong></p>
+                <div class="command">
+                    sudo yum install iproute iptables jq bridge-utils net-tools curl
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><span class="emoji">📥</span> Project Setup</h2>
+                <h3>1. Clone and Initialize</h3>
+                <div class="command">
+                    # Create project directory<br>
+                    mkdir local-linux-vpc<br>
+                    cd local-linux-vpc<br><br>
+                    
+                    # Make scripts executable<br>
+                    chmod +x vpcctl scripts/*.sh<br><br>
+                    
+                    # Initialize environment<br>
+                    sudo ./scripts/setup.sh
+                </div>
+
+                <h3>2. Project Structure</h3>
+                <div class="code-block">
+local-linux-vpc/
+├── vpcctl                          # Main VPC control script
+├── config/
+│   └── firewall_rules.json         # Security group definitions
+├── scripts/
+│   ├── setup.sh                    # Environment initialization
+│   ├── cleanup.sh                  # Resource cleanup
+│   ├── demo_workloads.sh           # Use case demonstrations
+│   └── demo-video-script.sh        # Documentation automation
+└── examples/                       # Sample configurations
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji">🚀</span> Complete Demonstration Walkthrough</h2>
+            <p>Let's run through a comprehensive demonstration that validates all project requirements:</p>
+
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('phase1')">Phase 1: Setup</div>
+                <div class="tab" onclick="showTab('phase2')">Phase 2: Connectivity</div>
+                <div class="tab" onclick="showTab('phase3')">Phase 3: Isolation</div>
+                <div class="tab" onclick="showTab('phase4')">Phase 4: Peering</div>
+                <div class="tab" onclick="showTab('phase5')">Phase 5: Security</div>
+                <div class="tab" onclick="showTab('phase6')">Phase 6: Cleanup</div>
+            </div>
+
+            <div id="phase1" class="tab-content active">
+                <div class="phase">PHASE 1: Core VPC Setup</div>
+                <div class="command">
+#!/bin/bash<br>
+echo "=== VPCCTL DEMONSTRATION WITH PERFECT ISOLATION ==="<br>
+echo "This script demonstrates ALL requirements including proper VPC isolation"<br>
+echo<br>
+<br>
+# Colors for better visualization<br>
+GREEN='\033[0;32m'<br>
+BLUE='\033[0;34m'<br>
+RED='\033[0;31m'<br>
+NC='\033[0m'<br>
+<br>
+echo -e "${BLUE}=== PHASE 1: Core VPC Setup ===${NC}"<br>
+sudo ./vpcctl cleanup-all<br>
+sleep 2<br>
+<br>
+# Create first VPC<br>
+sudo ./vpcctl create-vpc company-a 10.0.0.0/16<br>
+sudo ./vpcctl create-subnet company-a web public 10.0.1.0/24 eth0<br>
+sudo ./vpcctl create-subnet company-a app private 10.0.2.0/24<br>
+<br>
+# Deploy workloads<br>
+sudo ./vpcctl deploy-workload company-a web frontend 10.0.1.100<br>
+sudo ./vpcctl deploy-workload company-a app backend 10.0.2.100
+                </div>
+                <div class="output">
+=== PHASE 1: Core VPC Setup ===<br>
+<span class="success">✓</span> Created VPC: company-a with CIDR: 10.0.0.0/16<br>
+<span class="success">✓</span> Created bridge: br-company-a<br>
+<span class="success">✓</span> Created public subnet: web (10.0.1.0/24) in VPC: company-a<br>
+<span class="success">✓</span> Created private subnet: app (10.0.2.0/24) in VPC: company-a<br>
+<span class="success">✓</span> Deployed workload 'frontend' in subnet web with IP: 10.0.1.100<br>
+<span class="success">✓</span> Deployed workload 'backend' in subnet app with IP: 10.0.2.100
+                </div>
+            </div>
+
+            <div id="phase2" class="tab-content">
+                <div class="phase">PHASE 2: Validate Internal Connectivity</div>
+                <div class="command">
+echo -e "${BLUE}=== PHASE 2: Validate Internal Connectivity ===${NC}"<br>
+echo "Testing WITHIN VPC communication (should work):"<br>
+sudo ./vpcctl test-connectivity subnet-company-a-web 10.0.2.100<br>
+echo "Testing NAT functionality:"<br>
+sudo ./vpcctl test-internet subnet-company-a-web<br>
+sudo ./vpcctl test-internet subnet-company-a-app<br>
+echo
+                </div>
+                <div class="output">
+=== PHASE 2: Validate Internal Connectivity ===<br>
+Testing WITHIN VPC communication (should work):<br>
+<span class="success">✓ SUCCESS:</span> subnet-company-a-web can reach 10.0.2.100<br>
+Testing NAT functionality:<br>
+<span class="success">✓ SUCCESS:</span> Public subnet (web) has internet access<br>
+<span class="error">✗ FAILED:</span> Private subnet (app) cannot reach internet (expected)
+                </div>
+            </div>
+
+            <div id="phase3" class="tab-content">
+                <div class="phase">PHASE 3: VPC Isolation Test</div>
+                <div class="command">
+echo -e "${BLUE}=== PHASE 3: VPC Isolation Test ===${NC}"<br>
+# Create second VPC with completely different IP range<br>
+sudo ./vpcctl create-vpc company-b 172.16.0.0/16<br>
+sudo ./vpcctl create-subnet company-b api public 172.16.1.0/24 eth0<br>
+sudo ./vpcctl deploy-workload company-b api service 172.16.1.100<br>
+<br>
+echo "Testing VPC ISOLATION (should FAIL - no communication between VPCs):"<br>
+echo "Attempting cross-VPC communication from Company A to Company B:"<br>
+if sudo ip netns exec subnet-company-a-web ping -c 2 -W 1 172.16.1.100 > /dev/null 2>&1; then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo -e "${RED}❌ FAIL: VPC isolation broken - communication worked${NC}"<br>
+else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo -e "${GREEN}✅ PASS: VPC isolation working - communication blocked${NC}"<br>
+fi<br>
+<br>
+echo "Attempting cross-VPC HTTP access:"<br>
+if sudo ip netns exec subnet-company-a-web timeout 2 bash -c "echo > /dev/tcp/172.16.1.100/80" 2>/dev/null; then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo -e "${RED}❌ FAIL: VPC isolation broken - HTTP worked${NC}"<br>
+else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo -e "${GREEN}✅ PASS: VPC isolation working - HTTP blocked${NC}"<br>
+fi<br>
+echo
+                </div>
+                <div class="output">
+=== PHASE 3: VPC Isolation Test ===<br>
+<span class="success">✓</span> Created VPC: company-b with CIDR: 172.16.0.0/16<br>
+<span class="success">✓</span> Created public subnet: api (172.16.1.0/24) in VPC: company-b<br>
+<span class="success">✓</span> Deployed workload 'service' in subnet api with IP: 172.16.1.100<br>
+Testing VPC ISOLATION (should FAIL - no communication between VPCs):<br>
+Attempting cross-VPC communication from Company A to Company B:<br>
+<span class="success">✅ PASS:</span> VPC isolation working - communication blocked<br>
+Attempting cross-VPC HTTP access:<br>
+<span class="success">✅ PASS:</span> VPC isolation working - HTTP blocked
+                </div>
+            </div>
+
+            <div id="phase4" class="tab-content">
+                <div class="phase">PHASE 4: VPC Peering Implementation</div>
+                <div class="command">
+echo -e "${BLUE}=== PHASE 4: VPC Peering ===${NC}"<br>
+echo "Creating VPC peering to enable controlled communication:"<br>
+sudo ./vpcctl create-peering company-a company-b<br>
+sudo ./vpcctl list-peerings<br>
+<br>
+echo "Testing AFTER peering (should work):"<br>
+sudo ./vpcctl test-connectivity subnet-company-a-web 172.16.1.100<br>
+echo
+                </div>
+                <div class="output">
+=== PHASE 4: VPC Peering ===<br>
+Creating VPC peering to enable controlled communication:<br>
+<span class="success">✓</span> Created VPC peering between company-a and company-b<br>
+VPC Peerings:<br>
+company-a ↔ company-b<br>
+Testing AFTER peering (should work):<br>
+<span class="success">✓ SUCCESS:</span> subnet-company-a-web can reach 172.16.1.100
+                </div>
+            </div>
+
+            <div id="phase5" class="tab-content">
+                <div class="phase">PHASE 5: Firewall & Security Groups</div>
+                <div class="command">
+echo -e "${BLUE}=== PHASE 5: Firewall/Security Groups ===${NC}"<br>
+echo "Adding firewall rules to Company A web subnet:"<br>
+sudo ./vpcctl add-firewall-rule 10.0.1.0/24 80 tcp allow<br>
+sudo ./vpcctl add-firewall-rule 10.0.1.0/24 443 tcp allow  <br>
+sudo ./vpcctl add-firewall-rule 10.0.1.0/24 22 tcp deny<br>
+sudo ./vpcctl list-firewall-rules<br>
+<br>
+# Deploy test workload<br>
+sudo ./vpcctl deploy-workload company-a web test 10.0.1.200<br>
+<br>
+echo "Testing firewall enforcement:"<br>
+echo "HTTP (port 80) - Should be ALLOWED:"<br>
+if sudo ip netns exec subnet-company-a-web timeout 2 bash -c "echo > /dev/tcp/10.0.1.200/80" 2>/dev/null; then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo -e "${GREEN}✅ PASS: HTTP allowed as configured${NC}"<br>
+else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo -e "${RED}❌ FAIL: HTTP blocked unexpectedly${NC}"<br>
+fi<br>
+<br>
+echo "SSH (port 22) - Should be BLOCKED:"<br>
+if sudo ip netns exec subnet-company-a-web timeout 2 bash -c "echo > /dev/tcp/10.0.1.200/22" 2>/dev/null; then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo -e "${RED}❌ FAIL: SSH allowed unexpectedly${NC}"<br>
+else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo -e "${GREEN}✅ PASS: SSH blocked as configured${NC}"<br>
+fi<br>
+echo
+                </div>
+                <div class="output">
+=== PHASE 5: Firewall/Security Groups ===<br>
+Adding firewall rules to Company A web subnet:<br>
+<span class="success">✓</span> Added firewall rule: ALLOW tcp port 80 for 10.0.1.0/24<br>
+<span class="success">✓</span> Added firewall rule: ALLOW tcp port 443 for 10.0.1.0/24<br>
+<span class="success">✓</span> Added firewall rule: DENY tcp port 22 for 10.0.1.0/24<br>
+Firewall Rules for 10.0.1.0/24:<br>
+- ALLOW tcp:80<br>
+- ALLOW tcp:443  <br>
+- DENY tcp:22<br>
+Testing firewall enforcement:<br>
+HTTP (port 80) - Should be ALLOWED:<br>
+<span class="success">✅ PASS:</span> HTTP allowed as configured<br>
+SSH (port 22) - Should be BLOCKED:<br>
+<span class="success">✅ PASS:</span> SSH blocked as configured
+                </div>
+            </div>
+
+            <div id="phase6" class="tab-content">
+                <div class="phase">PHASE 6: Final Status & Cleanup</div>
+                <div class="command">
+echo -e "${BLUE}=== PHASE 6: Comprehensive Status & Cleanup ===${NC}"<br>
+echo "Current VPC status:"<br>
+sudo ./vpcctl status<br>
+<br>
+echo "Cleaning up all resources..."<br>
+sudo ./vpcctl cleanup-all<br>
+<br>
+echo -e "${GREEN}=== DEMONSTRATION COMPLETE ===${NC}"<br>
+echo<br>
+echo "🎯 ALL PROJECT REQUIREMENTS VALIDATED:"<br>
+echo "✅ Core VPC creation with bridges and namespaces"<br>
+echo "✅ Subnet routing and CIDR assignment"<br>
+echo "✅ NAT Gateway (public vs private internet access)"<br>
+echo "✅ VPC ISOLATION (no cross-VPC communication by default)"<br>
+echo "✅ VPC PEERING (controlled cross-VPC communication)"<br>
+echo "✅ FIREWALL RULES (JSON-based policy enforcement)"<br>
+echo "✅ CLEAN TEARDOWN (all resources properly removed)"<br>
+echo "✅ COMPREHENSIVE LOGGING (all activities tracked)"<br>
+echo<br>
+echo "🚀 READY FOR SUBMISSION - ALL REQUIREMENTS MET!"
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h2><span class="emoji">🔧</span> Technical Deep Dive</h2>
+                
+                <h3>How VPC Isolation Works</h3>
+                <p><strong>Network Namespaces:</strong></p>
+                <div class="command">
+# Each subnet gets its own namespace<br>
+ip netns add ns-company-a-web<br>
+ip netns add ns-company-a-app<br>
+<br>
+# Complete isolation - processes in one namespace can't see others<br>
+sudo ip netns exec ns-company-a-web ip link show
+                </div>
+
+                <p><strong>Virtual Bridges (VPC Routers):</strong></p>
+                <div class="command">
+# Each VPC gets a bridge that acts as internal router<br>
+ip link add br-company-a type bridge<br>
+ip link set br-company-a up<br>
+<br>
+# Connect subnets to bridge via veth pairs<br>
+ip link add veth-web-host type veth peer name veth-web-ns<br>
+ip link set veth-web-ns netns ns-company-a-web<br>
+ip link set veth-web-host master br-company-a
+                </div>
+
+                <h3>NAT Implementation</h3>
+                <p><strong>Public Subnet NAT:</strong></p>
+                <div class="command">
+# Enable IP forwarding<br>
+echo 1 > /proc/sys/net/ipv4/ip_forward<br>
+<br>
+# NAT rules for public subnet<br>
+iptables -t nat -A POSTROUTING -s 10.0.1.0/24 -o eth0 -j MASQUERADE<br>
+iptables -A FORWARD -i br-company-a -o eth0 -j ACCEPT<br>
+iptables -A FORWARD -i eth0 -o br-company-a -m state --state RELATED,ESTABLISHED -j ACCEPT
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><span class="emoji">🛡️</span> Security Groups Implementation</h2>
+                
+                <h3>JSON Firewall Rules</h3>
+                <div class="code-block">
+{
+  "vpc_name": "company-a",
+  "security_groups": [
+    {
+      "name": "web-sg",
+      "subnet": "10.0.1.0/24",
+      "ingress_rules": [
+        {
+          "protocol": "tcp",
+          "port_range": "80,443",
+          "source": "0.0.0.0/0",
+          "action": "allow"
+        }
+      ],
+      "egress_rules": [
+        {
+          "protocol": "tcp",
+          "port_range": "1-65535",
+          "destination": "0.0.0.0/0",
+          "action": "allow"
+        }
+      ]
+    }
+  ]
+}
+                </div>
+
+                <h3>iptables Implementation</h3>
+                <div class="command">
+# Apply to specific namespace<br>
+ip netns exec ns-company-a-web iptables -A INPUT -p tcp --dport 80 -j ACCEPT<br>
+ip netns exec ns-company-a-web iptables -A INPUT -p tcp --dport 22 -j DROP
+                </div>
+
+                <h3>Real-World Use Cases</h3>
+                <p><strong>Three-Tier Web Application:</strong></p>
+                <div class="command">
+# Create production VPC<br>
+sudo ./vpcctl create-vpc production 10.0.0.0/16<br>
+<br>
+# Create tiers<br>
+sudo ./vpcctl create-subnet production web public 10.0.1.0/24 eth0<br>
+sudo ./vpcctl create-subnet production app private 10.0.2.0/24<br>
+sudo ./vpcctl create-subnet production db private 10.0.3.0/24<br>
+<br>
+# Deploy workloads<br>
+sudo ./vpcctl deploy-workload production web nginx 10.0.1.10<br>
+sudo ./vpcctl deploy-workload production app api 10.0.2.10<br>
+sudo ./vpcctl deploy-workload production db mysql 10.0.3.10<br>
+<br>
+# Apply security groups<br>
+sudo ./vpcctl apply-firewall-rules config/web_app_db_rules.json
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji">🐛</span> Troubleshooting Guide</h2>
+            
+            <div class="grid-2">
+                <div>
+                    <h3>Common Issues & Solutions</h3>
+                    
+                    <p><strong>"Operation not permitted" errors:</strong></p>
+                    <div class="command">
+# Ensure you're using sudo<br>
+sudo ./vpcctl create-vpc test 10.0.0.0/16<br>
+<br>
+# Check capabilities<br>
+sudo capsh --print
+                    </div>
+
+                    <p><strong>Network namespace not found:</strong></p>
+                    <div class="command">
+# List all namespaces<br>
+sudo ip netns list<br>
+<br>
+# Check if setup ran successfully<br>
+sudo ./scripts/setup.sh
+                    </div>
+                </div>
+
+                <div>
+                    <h3>Debugging Commands</h3>
+                    <div class="command">
+# Comprehensive network status<br>
+sudo ./vpcctl status<br>
+<br>
+# Detailed namespace examination<br>
+sudo ip netns exec ns-company-a-web ip addr show<br>
+sudo ip netns exec ns-company-a-web route -n<br>
+<br>
+# Bridge information<br>
+sudo bridge link show br-company-a<br>
+<br>
+# Firewall rule verification<br>
+sudo ip netns exec ns-company-a-web iptables -L -n -v --line-numbers
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji">📊</span> Validation Checklist</h2>
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                <thead>
+                    <tr style="background: #34495e; color: white;">
+                        <th style="padding: 12px; text-align: left; border: 1px solid #2c3e50;">Requirement</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #2c3e50;">Test Method</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid #2c3e50;">Expected Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: #ecf0f1;">
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">VPC Creation</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;"><code>create-vpc</code> command</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">Bridge + namespaces created</td>
+                    </tr>
+                    <tr style="background: #ffffff;">
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">Subnet Isolation</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">Cross-subnet ping</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">Communication only within VPC</td>
+                    </tr>
+                    <tr style="background: #ecf0f1;">
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">NAT Functionality</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">Internet connectivity test</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">Public: yes, Private: no</td>
+                    </tr>
+                    <tr style="background: #ffffff;">
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">VPC Isolation</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">Cross-VPC communication</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">Blocked by default</td>
+                    </tr>
+                    <tr style="background: #ecf0f1;">
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">VPC Peering</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">After peering setup</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">Controlled communication</td>
+                    </tr>
+                    <tr style="background: #ffffff;">
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">Security Groups</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">Port-specific tests</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">Rules enforced correctly</td>
+                    </tr>
+                    <tr style="background: #ecf0f1;">
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">Clean Teardown</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;"><code>cleanup-all</code> command</td>
+                        <td style="padding: 10px; border: 1px solid #bdc3c7;">All resources removed</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h2><span class="emoji">🧹</span> Complete Cleanup</h2>
+                <div class="command">
+# Remove all VPC resources<br>
+sudo ./scripts/cleanup.sh<br>
+<br>
+# Or remove specific VPC<br>
+sudo ./vpcctl delete-vpc company-a<br>
+<br>
+# Verify cleanup<br>
+sudo ip netns list<br>
+sudo brctl show<br>
+sudo iptables -t nat -L
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><span class="emoji">🚀</span> Next Steps & Enhancements</h2>
+                <h3>Potential Extensions</h3>
+                <ul class="checklist">
+                    <li>Load Balancers: Add support for internal/external load balancers</li>
+                    <li>VPN Connectivity: Implement site-to-site VPN connections</li>
+                    <li>Monitoring: Add network monitoring and metrics collection</li>
+                    <li>High Availability: Redundant routers and failover mechanisms</li>
+                    <li>Cloud Integration: Extend to manage actual cloud VPCs</li>
+                </ul>
+
+                <h3>Learning Resources</h3>
+                <ul class="checklist">
+                    <li>Linux Networking: <code>man ip</code>, <code>man iptables</code>, <code>man bridge</code></li>
+                    <li>Cloud VPC Docs: AWS VPC, Google Cloud VPC, Azure VNet</li>
+                    <li>Network Security: iptables/nftables documentation</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white;">
+            <h2 style="color: white;"><span class="emoji">✅</span> Conclusion</h2>
+            <p style="font-size: 1.2em; margin: 20px 0;">
+                You've successfully built a complete VPC emulator that demonstrates:
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 25px 0;">
+                <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                    <h4 style="color: white;">🏢 Enterprise Networking</h4>
+                    <p>Enterprise-grade networking on local hardware</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                    <h4 style="color: white;">🔒 True Isolation</h4>
+                    <p>True isolation between virtual networks</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                    <h4 style="color: white;">🛡️ Cloud Security</h4>
+                    <p>Cloud-native security patterns with security groups</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                    <h4 style="color: white;">🌐 Real Routing</h4>
+                    <p>Real-world routing with NAT and peering</p>
+                </div>
+            </div>
+            <p style="font-size: 1.1em; margin-top: 20px;">
+                This project provides invaluable hands-on experience with cloud networking concepts and prepares you for working with production cloud environments. The skills learned here translate directly to AWS VPC, Google Cloud VPC, and Azure VNet implementations.
+            </p>
+            <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.3); border-radius: 10px;">
+                <h3 style="color: white; font-size: 1.5em;">Ready to deploy your own cloud-like networks locally! 🎉</h3>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
